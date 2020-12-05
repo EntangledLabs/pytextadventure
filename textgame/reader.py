@@ -1,5 +1,4 @@
 '''
-
 The Reader class takes text files relevant to TextGame and interprets them
 into the proper node structure.
 
@@ -76,7 +75,8 @@ and a textual section:
 '''
 
 from textgame.node import *
-import configparser
+
+import configparser, re
 
 class Reader():
 
@@ -98,25 +98,65 @@ class Reader():
             if key == 'instructions':
                 pass
 
+
+    '''
+    Reads the chapter specified at init. It stores all sections within the ChapterNode
+    as SectionNodes. 
+    '''
     def read_chapter(self):
         # File read
-        filename = 'chapter{}.txt'.format(self.chapter)
+        filename = './stories/chapter{}.txt'.format(self.chapter)
         cfile = open(filename, 'rt')
         
         # ChapterNode creation
-        chnode = ChapterNode(self.chapter)
-
+        self.chnode = ChapterNode(self.chapter)
+        self.chnode.add_title([cfile.readline().strip('\n')])
+    
         # Read lines and determine what to do with them
         lines = cfile.readlines()
-        for i in range(0,len(lines)):
-            line = lines[i]
-            if i == 0:
-                chnode.add_title(line)
-            else:
-                if (line[0].isdigit() and line[len(line)-1] == '='):
-                    sectnode = self.interpret_sequence(line)
+        for line in lines:
+            t = line.strip('\n')
+            if (re.match('[0-9]+[=ebp].*[=]', t)):
+                interpret = self.interpret_sequence(t)
+                if interpret == 'e':
+                    self.chnode.add_section(sectnode, sectnode.get_id())
+                    sectnode = None
                 else:
-                    pass
+                    sectnode = interpret
+            else:
+                if t == '':
+                    sectnode.add_content('\n')
+                else:
+                    sectnode.add_content(t)
 
+
+    '''
+    Takes a sequence and interprets it to the proper section node configuration
+    '''
     def interpret_sequence(self, sequence):
-        return Node(0)
+        # Read sequence and split into its sections
+        part1 = re.match('[0-9]+', sequence).group(0)
+        part2 = re.search('[=ebp]', sequence).group(0)
+        part3 = re.findall('[c][0-9]+', sequence)
+
+        for i in part3:
+            i = i[1:]
+            i = int(i)
+
+        #print('Section {}, mode {}'.format(part1,part2))
+
+        if (part2 == '='):
+            return SectionNode(int(part1))
+        elif (part2 == 'b'):
+            nd = SectionNode(int(part1))
+            nd.add_branches(part3)
+            return nd
+        elif (part2 == 'p'):
+            nd = SectionNode(int(part1))
+            nd.req_prompt()
+            return nd
+        elif (part2 == 'e'):
+            return 'e'
+
+    def get_chapter_node(self):
+        return self.chnode
