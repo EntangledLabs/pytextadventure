@@ -81,3 +81,12 @@ class ChapterNode():
         return 'Chapter node #{}, title \'{}\' with {} sections'.format(
             self.c_num, self.c_title, len(self.c_sections)
         )
+
+class CreditsNode():
+    cr_credits = []
+
+    def add_credit(self, credit, person):
+        self.cr_credits.append((credit, person))
+
+    def get_credits(self):
+        lines = []
