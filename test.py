@@ -1,5 +1,6 @@
 #Imports. Optimize imports for only needed modules
 from textgame.reader import Reader
+from textgame.node import SectionNode
 
 #Global variables.
 SCREEN_WIDTH = 1000
@@ -17,10 +18,11 @@ BLACK = (0,0,0)
 #Creating the display
 
 #Screens
-rd = Reader(chapter=1)
-ch = rd.get_chapter_node()
-se = ch.get_sections()
-print(se)
-print(se.get(0).get_content())
+cn = Reader().read_chapter(1)
+print(str(cn))
+
+for i in range(0, cn.get_num_sections()):
+    sn = cn.get_section(i)
+    print('Section {} with contents \"{}\"'.format(sn.get_num(), sn.get_content()))
 
 quit()
