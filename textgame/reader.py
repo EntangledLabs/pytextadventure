@@ -74,44 +74,25 @@ and a textual section:
     4e= <- Section 4, end.
 '''
 
-from textgame.node import *
-
 import configparser, re
 
 class Reader():
 
-    '''
-    Performs init of the Reader.
-    
-    Supported kwargs are:
-    chapter <- read a chapter file
-    credits <- read a credits file
-    instructions <- read an instructions file
-    '''
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            if key == 'credits':
-                pass
-            if key == 'chapter':
-                self.chapter = value
-                self.read_chapter()
-            if key == 'instructions':
-                pass
+    # Class variables
+    chapter_num = 0
+    chapter_title = ''
+    chapter_sections = {}
 
-
-    '''
-    Reads the chapter specified at init. It stores all sections within the ChapterNode
-    as SectionNodes. 
-    '''
-    def read_chapter(self):
+    def read_chapter(self, ch_num):
+        
         # File read
-        filename = './stories/chapter{}.txt'.format(self.chapter)
+        filename = './stories/chapter{}.txt'.format(ch_num)
         cfile = open(filename, 'rt')
         
-        # ChapterNode creation
-        self.chnode = ChapterNode(self.chapter)
-        self.chnode.add_title([cfile.readline().strip('\n')])
-    
+        # Chapter creation
+        self.chapter_num = ch_num
+        self.chapter_title = cfile.readline().strip('\n')
+
         # Read lines and determine what to do with them
         lines = cfile.readlines()
         for line in lines:
@@ -119,15 +100,9 @@ class Reader():
             if (re.match('[0-9]+[=ebp].*[=]', t)):
                 interpret = self.interpret_sequence(t)
                 if interpret == 'e':
-                    self.chnode.add_section(sectnode, sectnode.get_id())
-                    sectnode = None
-                else:
-                    sectnode = interpret
+
             else:
-                if t == '':
-                    sectnode.add_content('\n')
-                else:
-                    sectnode.add_content(t)
+                
 
 
     '''
@@ -157,6 +132,3 @@ class Reader():
             return nd
         elif (part2 == 'e'):
             return 'e'
-
-    def get_chapter_node(self):
-        return self.chnode
