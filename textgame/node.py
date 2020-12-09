@@ -55,6 +55,7 @@ class ChapterNode():
     c_num = 0
     c_title = ''
     c_sections = dict()
+    c_sect_nums = list()
 
     def __init__(self, c_num):
         self.c_num = c_num
@@ -63,7 +64,9 @@ class ChapterNode():
         self.c_title = title
 
     def add_section(self, section):
-        self.c_sections[section.get_num()] = section
+        self.c_sections[str(section.get_num())] = section
+        self.c_sect_nums.append(str(section.get_num()))
+        self.c_sect_nums.sort()
 
     def get_num(self):
         return self.c_num
@@ -72,10 +75,13 @@ class ChapterNode():
         return self.c_title
     
     def get_section(self, num):
-        return self.c_sections[num]
+        return self.c_sections[str(num)]
+
+    def get_section_nums(self):
+        return self.c_sect_nums
 
     def get_num_sections(self):
-        return len(self.c_sections)
+        return len(self.c_sect_nums)
 
     def __str__(self):
         return 'Chapter node #{}, title \'{}\' with {} sections'.format(

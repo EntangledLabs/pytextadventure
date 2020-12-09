@@ -19,7 +19,7 @@ BLACK = (0,0,0)
 
 #Screens
 cn = Reader().read_chapter(1)
-print(str(cn))
+#print(str(cn))
 
 for i in range(0, cn.get_num_sections()):
     sn = cn.get_section(i)

@@ -103,8 +103,6 @@ class Reader():
         for i in section_nums:
             nodes[section_nums[i]] = SectionNode(section_nums[i])
 
-        #print('Here are the nodes: {}'.format(nodes))
-
         # Take the text from 'lines'
         index = 0
         for line in lines:
@@ -123,8 +121,6 @@ class Reader():
 
             # If no sequence detected, add the line to the SectionNode
             else:
-                print(nodes[index])
-                print(line)
                 nodes[index].add_line(line)
 
         return c_node
@@ -150,3 +146,6 @@ class Reader():
         for i in br:
             i = int(i[1:])
         return br
+
+    def read_credits(self):
+        pass
