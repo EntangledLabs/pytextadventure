@@ -3,33 +3,44 @@ from textgame.items import *
 
 class Player():
 
-    reader = Reader()
+    reader = None
     inventory = dict()
     ch_node = None
     ch_num = 0
     s_num_idx = 0
 
-    def __init__(self, start_ch, start_inv):
-        self.reader.read_chapter(start_ch)
+    def __init__(self, path, start_ch, start_inv):
+        self.reader = Reader(path)
+        self.ch_num = start_ch
         self.inventory = start_inv
         self.ch_node = self.reader.read_chapter(self.ch_num)
         self.s_num = self.ch_node.get_section_nums()[0]
+
+    
 
     # Progression methods
 
     def progress_next(self):
         '''
-        Overarching progression. Runs both progress_next_chapter() and progress_next_section()
+        Moves indexes to the next available section
         '''
-        pass
-
-    def progress_next_chapter(self):
-        self.ch_num = self.ch_num +1
-
-    def progress_next_section(self):
-        self.s_num_idx = self.s_num_idx + 1
-
-    # Read and return methods
+        num_sect = self.ch_node.get_num_sections()
+        if self.s_num_idx + 1 == num_sect:
+            self.ch_num = self.ch_num + 1
+            self.s_num_idx = 0
+        else:
+            self.s_num_idx = self.s_num_idx + 1
 
     def read(self):
-        pass
+        '''
+        Examines the indexes. If the next chapter does not exist,
+        it will return a byte object of size two. Else, it will return
+        the contents of the section.
+        '''
+        if self.ch_node.get_num() != self.ch_num:
+            if self.ch_num in self.reader.get_chapter_nums():
+                self.ch_node = self.reader.read_chapter(self.ch_num)
+            else:
+                return bytes(2)
+        self.s_num = self.ch_node.get_section_nums()[self.s_num_idx]
+        return self.ch_node.get_section(self.s_num)
