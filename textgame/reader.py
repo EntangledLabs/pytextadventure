@@ -1,5 +1,5 @@
 from textgame.node import *
-import configparser, re
+import re, os
 
 class Reader():
     '''
@@ -77,12 +77,26 @@ class Reader():
         Story goes here.
         4e= <- Section 4, end.
     '''
-    # Class variables
+    # Global variables
+    path = ''
+    file_list = list()
+
+    # Constructor. Takes in a directory path to the data
+    def __init__(self, path):
+        self.path = path
+        self.read_filenames()
+
+    # Read methods
+
+    def read_filenames(self):
+        with os.scandir(self.path) as entries:
+            for entry in entries:
+                self.file_list.append(entry.name)
 
     def read_chapter(self, ch_num):
         
         # File read
-        filename = './stories/chapter{}.txt'.format(ch_num)
+        filename = '{}/chapter{}.txt'.format(self.path, ch_num)
         cfile = open(filename, 'rt')
 
         # Chapter creation
@@ -149,3 +163,15 @@ class Reader():
 
     def read_credits(self):
         pass
+
+    # Accessor methods
+
+    def get_files(self):
+        return self.file_list
+
+    def get_chapter_nums(self):
+        nums = list()
+        for i in self.file_list:
+            if re.match('(chapter)[0-9]+([.]txt)', i):
+                nums.append(int(re.search('[0-9]+', i).group(0)))
+        return nums
