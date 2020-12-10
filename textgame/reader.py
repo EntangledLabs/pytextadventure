@@ -151,7 +151,6 @@ class Reader():
         else:
             return 2
 
-
     def read_branches(self, sequence):
         '''
         Looks for the branches in the sequence
