@@ -1,5 +1,5 @@
 from textgame.reader import Reader
-from textgame.items.item import Item
+from textgame.item import Item
 
 class Player():
 
