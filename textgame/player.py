@@ -1,10 +1,10 @@
 from textgame.reader import Reader
-from textgame.items import *
+from textgame.item import Item
 
 class Player():
 
     reader = None
-    inventory = dict()
+    inventory = list()
     ch_node = None
     ch_num = 0
     s_num_idx = 0
@@ -16,7 +16,17 @@ class Player():
         self.ch_node = self.reader.read_chapter(self.ch_num)
         self.s_num = self.ch_node.get_section_nums()[0]
 
-    
+    # Inventory methods
+
+    def item_list(self):
+        return self.inventory
+
+    def add_item(self, item):
+        if item in self.inventory:
+            idx = self.inventory.index(item)
+            self.inventory[idx].update(item)
+        else:
+            self.inventory.append(item)
 
     # Progression methods
 
