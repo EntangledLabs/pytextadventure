@@ -8,6 +8,7 @@ class Player():
     ch_node = None
     ch_num = 0
     s_num_idx = 0
+    branch_sec = False
 
     def __init__(self, path, start_ch, start_inv):
         self.reader = Reader(path)
@@ -30,7 +31,16 @@ class Player():
 
     # Progression methods
 
-    def progress_next(self):
+    def progress_next(self, *args):
+        if (self.branch_sec):
+            self.progress_next_sel(args[0])
+        else:
+            self.progress_next_def()
+
+    def progress_next_sel(self, select_num):
+        pass
+
+    def progress_next_def(self):
         '''
         Moves indexes to the next available section
         '''
